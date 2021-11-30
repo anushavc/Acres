@@ -6,6 +6,6 @@ const router=express.Router();
 router.route('/').get(getProperties).post(protect,createProperty);
 router.route('/:id').get(getProperty).put(protect,updateProperty).delete(protect,deleteProperty);
 router.route('/raduis/:zipcode/:distance').get(getPropertiesInRaduis);
-router.route('/:id/photo').put(protect,uploadPhoto);
+router.route('/:id/photo').put(uploadPhoto);
 
 module.exports=router;

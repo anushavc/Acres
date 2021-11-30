@@ -58,6 +58,8 @@ exports.createProperty=asyncHandler(async(req,res,next)=>{
 exports.updateProperty=asyncHandler(async(req,res,next)=>{
 
         let property=await Property.findById(req.params.id);
+        console.log("hello");
+        console.log(property);
         if(!property){
             return res.status(400).json({success:false});
         }
@@ -67,7 +69,8 @@ exports.updateProperty=asyncHandler(async(req,res,next)=>{
                 new ErrorResponse(`User ${req.params.id} is not authorized to update this property`,401)
             )
         }
-        property=await Property.findOneAndUpdate(req.params.id,req.body,{
+        property=await Property.findByIdAndUpdate(req.params.id,req.body,{
+        
             new:true,
             runValidators:true
         });
@@ -80,15 +83,11 @@ exports.updateProperty=asyncHandler(async(req,res,next)=>{
 //public
 exports.deleteProperty=asyncHandler(async(req,res,next)=>{
     let property=await Property.findById(req.params.id);
+    console.log(property);
     if(!property){
         return res.status(400).json({success:false});
     }
-    if(property.user.toString()!=req.user.id)
-    {
-        return next(
-            new ErrorResponse(`User ${req.params.id} is not authorized to delete this property`,401)
-        )
-    }
+ 
     property.remove();
     res.status(200).json({success:true,data:property});
      
@@ -127,22 +126,19 @@ exports.getPropertiesInRaduis=asyncHandler(async(req,res,next)=>{
 //private
 exports.uploadPhoto=asyncHandler(async(req,res,next)=>{
     const property=await Property.findById(req.params.id);
+    console.log("hello");
+    console.log(property);
     if(!property){
         return next(new ErrorResponse(`The property is not found with the id of ${req.params.id}`,404));
     }
 
-    if(property.user.toString()!=req.user.id)
-    {
-        return next(
-            new ErrorResponse(`User ${req.params.id} is not authorized to update this property photo`,401)
-        )
-    }
 
     if(!req.files){
         return next(new ErrorResponse(`Upload the image please`,400));
     }
     //checking if the file is an image or not
     const file=req.files.file;
+    console.log(file);
     if(!file.mimetype.startsWith('image'))
     {
         return next(new ErrorResponse(`Please upload a file`,400));
@@ -174,3 +170,4 @@ exports.uploadPhoto=asyncHandler(async(req,res,next)=>{
         });
       });
 });
+
